@@ -1,0 +1,47 @@
+# ==========================================
+# 1. PYTHON LINGKUNGAN VIRTUAL & CACHE
+# ==========================================
+# Menyembunyikan folder virtual environment
+venv/
+.venv/
+env/
+
+# Menyembunyikan file kompilasi Python (__pycache__)
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ==========================================
+# 2. UNIT TESTING & COVERAGE (MOCK DATA)
+# ==========================================
+# Menyembunyikan database rekaman coverage pengetesan kamu
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# ==========================================
+# 3. KREDENSIAL RAHASIA (SECURITY CRITICAL)
+# ==========================================
+# WAJIB: Menyembunyikan kunci API Google Sheets milikmu
+google-sheets-api.json
+
+# Menyembunyikan file konfigurasi lingkungan/env jika ada di kemudian hari
+.env
+*.env
+
+# ==========================================
+# 4. DATA & OUTPUT LOG (BIG FILES)
+# ==========================================
+# Menyembunyikan semua file CSV hasil dump data mentah atau pengujian
+# *.csv
+
+# Menyembunyikan screenshot atau gambar dokumentasi di folder utama
+# *.png
+# *.jpg
+# *.jpeg
+
+# Menyembunyikan file log sistem atau teks catatan tambahan
+*.log
+# submission.txt

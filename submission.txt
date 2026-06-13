@@ -1,0 +1,8 @@
+# Menjalankan skrip
+python3 main.py
+
+# Menjalankan unit test
+coverage run -m unittest discover -s tests && coverage report -m
+
+# Url Google Sheets
+https://docs.google.com/spreadsheets/d/1hP6rmzatDloWcvL-WuZApt4QSqBJjXqw4Ww1ykolzDI/edit?usp=sharing
