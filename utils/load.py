@@ -9,7 +9,7 @@ def load_data(df, filename="fashion_studio_products.csv"):
     """
     Menyimpan data ke tiga repositori (CSV, Google Sheets, dan PostgreSQL).
     """
-    print("====== MEMULAI PROSES LOADING DATA (TRIPLE-REPOSITORY) ======")
+    print("Loading data ke repositori...")
 
     if df.empty:
         print("[Load] Gagal memuat data karena DataFrame kosong.")
@@ -19,9 +19,7 @@ def load_data(df, filename="fashion_studio_products.csv"):
     sheets_success = False
     postgres_success = False
 
-    # =========================================================================
-    # REPOSITORI 1: SIMPAN KE CSV LOKAL
-    # =========================================================================
+    # CSV lokal
     try:
         df.to_csv(filename, index=False)
         print(f"[Load - CSV] Berhasil menyimpan data ke berkas: '{filename}'")
@@ -33,9 +31,7 @@ def load_data(df, filename="fashion_studio_products.csv"):
     except Exception as e:
         print(f"[Error - CSV] Terjadi kesalahan: {e}")
 
-    # =========================================================================
-    # REPOSITORI 2: UNGGAH KE GOOGLE SHEETS
-    # =========================================================================
+    # Google Sheets
     SPREADSHEET_ID = "1hP6rmzatDloWcvL-WuZApt4QSqBJjXqw4Ww1ykolzDI"
     CREDENTIALS_FILE = "google-sheets-api.json"
 
@@ -62,10 +58,8 @@ def load_data(df, filename="fashion_studio_products.csv"):
     except Exception as e:
         print(f"[Error - Sheets] Gagal mengunggah ke Google Sheets: {e}")
 
-    # =========================================================================
-    # REPOSITORI 3: SIMPAN KE POSTGRESQL (WSL)
-    # =========================================================================
-    print("[Load - Postgres] Menghubungkan ke PostgreSQL lokal di WSL...")
+    # PostgreSQL
+    print("Menghubungkan ke PostgreSQL...")
 
     db_config = {
         "dbname": "pemda",
@@ -77,11 +71,9 @@ def load_data(df, filename="fashion_studio_products.csv"):
 
     conn = None
     try:
-        # 1. Buka koneksi ke database
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor()
 
-        # 2. Buat tabel baru
         create_table_query = """
         CREATE TABLE IF NOT EXISTS cleaned_products (
             id SERIAL PRIMARY KEY,
@@ -96,26 +88,21 @@ def load_data(df, filename="fashion_studio_products.csv"):
         """
         cur.execute(create_table_query)
 
-        # 3. Bersihkan data lama
         cur.execute("TRUNCATE TABLE cleaned_products RESTART IDENTITY;")
 
-        # 4. Siapkan query INSERT
         insert_query = """
         INSERT INTO cleaned_products (title, price, rating, colors, size, gender, timestamp)
         VALUES (%s, %s, %s, %s, %s, %s, %s);
         """
 
-        # 5. Konversi data DataFrame menjadi tuple
         records_to_insert = (
             df[["Title", "Price", "Rating", "Colors", "Size", "Gender", "Timestamp"]]
             .fillna("")
             .values.tolist()
         )
 
-        # Execute batch insert
         extras.execute_batch(cur, insert_query, records_to_insert)
 
-        # 6. Commit transaksi
         conn.commit()
         print(
             "[Load - Postgres] Sukses! 867 baris data berhasil ditanam ke database PostgreSQL."
@@ -133,13 +120,9 @@ def load_data(df, filename="fashion_studio_products.csv"):
             cur.close()
             conn.close()
 
-    # =========================================================================
-    # EVALUASI AKHIR PIPELINE
-    # =========================================================================
-    print("\n====== RINGKASAN STATUS LOADING ======")
+    print("\n... ")
     print(f"1. Local CSV     : {'BERHASIL' if csv_success else 'GAGAL'}")
     print(f"2. Google Sheets : {'BERHASIL' if sheets_success else 'GAGAL'}")
     print(f"3. PostgreSQL    : {'BERHASIL' if postgres_success else 'GAGAL'}")
-    print("======================================")
 
     return csv_success and sheets_success and postgres_success

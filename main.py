@@ -8,11 +8,9 @@ from utils.load import load_data
 def main():
     raw_csv_cache = "raw_data_cache.csv"
 
-    # 1. TAHAP EXTRACT (Dengan Cache)
+    # 1. Ekstrak dengan cache
     if os.path.exists(raw_csv_cache):
-        print(
-            f"[Extract] Menemukan cache data mentah '{raw_csv_cache}'. Membaca dari file lokal..."
-        )
+        print(f"Membaca dari file lokal...")
         df_raw = pd.read_csv(raw_csv_cache)
         raw_data = df_raw.to_dict(orient="records")
     else:
@@ -20,22 +18,16 @@ def main():
 
         if raw_data:
             pd.DataFrame(raw_data).to_csv(raw_csv_cache, index=False)
-            print(f"[Extract] Data mentah berhasil di-cache ke '{raw_csv_cache}'")
+            print(f"Data mentah berhasil di-cache")
 
-    # 2. TAHAP TRANSFORM
+    # 2. Transform
     cleaned_df = transform_data(raw_data)
 
-    # 3. TAHAP LOAD & VERIFIKASI OUTPUT
+    # 3. Load
     if not cleaned_df.empty:
         load_data(cleaned_df, filename="products.csv")
-
-        print("\nBerikut adalah data yang dihasilkan.")
         print(cleaned_df.head(5).to_string())
-
-        print("\nTipe data yang dihasilkan.")
-        print("-" * 65)
         cleaned_df.info()
-        print("-" * 65)
 
 
 if __name__ == "__main__":

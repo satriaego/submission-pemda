@@ -12,7 +12,6 @@ class TestExtract(unittest.TestCase):
         mock_response = MagicMock()
         mock_response.status_code = 200
 
-        # HTML palsu disesuaikan dengan class DOM yang dicari di kode asli
         mock_response.text = """
         <html>
             <body>
@@ -31,26 +30,22 @@ class TestExtract(unittest.TestCase):
         """
         mock_get.return_value = mock_response
 
-        # Batasi parameter agar fungsi langsung keluar setelah iterasi halaman pertama selesai
         result = extract_product_data(max_records=1, max_pages=1)
 
-        # Pengujian logika asersi
         self.assertIsNotNone(result)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]["Title"], "Kaos Polos Keren")
-        print("[Test - Extract] Skenario Sukses Teruji Tanpa Scraping Asli.")
+        print("Skenario Sukses Teruji Tanpa Scraping Asli.")
 
     @patch("utils.extract.requests.get")
     def test_extract_failed(self, mock_get):
         """Menguji skenario ketahanan ketika koneksi internet terputus"""
-        # Simulasikan melempar eror koneksi
         mock_get.side_effect = requests.exceptions.RequestException("Koneksi Putus")
 
         result = extract_product_data(max_records=1, max_pages=1)
 
-        # Logika asersi: harus mengembalikan list kosong [] sesuai penanganan except kodemu
         self.assertEqual(result, [])
-        print("[Test - Extract] Skenario Eror Teruji.")
+        print("Skenario Eror Teruji.")
 
 
 if __name__ == "__main__":

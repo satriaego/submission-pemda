@@ -12,22 +12,20 @@ def extract_product_data(max_records=1000, max_pages=50):
     base_url = "https://fashion-studio.dicoding.dev/"
     all_products = []
 
-    print("====== MEMULAI PROSES EKSTRAKSI DATA ======")
-
     for page in range(1, max_pages + 1):
         if page == 1:
             url = base_url
         else:
             url = f"{base_url}page{page}"
 
-        print(f"[Extract] Mengambil data dari: {url}")
+        print(f"Mengambil data dari: {url}")
 
         try:
             response = requests.get(url, timeout=10)
 
             if response.status_code != 200:
                 print(
-                    f"[Warning] Halaman {page} mengembalikan status code: {response.status_code}. Berhenti."
+                    f"Halaman {page} mengembalikan status code: {response.status_code}. Berhenti."
                 )
                 break
 
@@ -84,20 +82,16 @@ def extract_product_data(max_records=1000, max_pages=50):
 
                 all_products.append(product_data)
 
-            print(f"[Progress] Berhasil mengumpulkan {len(all_products)} data...")
+            print(f"Berhasil mengumpulkan {len(all_products)} data...")
             time.sleep(1)
 
         except requests.exceptions.RequestException as e:
-            print(f"[Error] Terjadi kesalahan koneksi pada halaman {page}: {e}")
+            print(f"Terjadi kesalahan koneksi pada halaman {page}: {e}")
             break
 
-    print(
-        f"====== EKSTRAKSI SELESAI: Total {len(all_products)} data mentah didapatkan ======"
-    )
+    print(f"Selesai: Total {len(all_products)}")
     return all_products
 
 
-# Pelindung utama dari kebocoran saat di-import oleh unittest
 if __name__ == "__main__":
-    # Hanya berjalan jika dieksekusi langsung: python utils/extract.py
     extract_product_data(max_records=10, max_pages=1)

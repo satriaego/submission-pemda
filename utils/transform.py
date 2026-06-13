@@ -6,16 +6,14 @@ def transform_data(raw_data):
     """
     Melakukan transformasi data.
     """
-    print("====== MEMULAI PROSES TRANSFORMASI DATA ======")
+    print("Memulai...")
 
     try:
         if not raw_data:
-            print("[Transform] Tidak ada data mentah untuk ditransformasi.")
+            print("Transform Tidak ada data mentah untuk ditransformasi.")
             return pd.DataFrame()
 
         df = pd.DataFrame(raw_data)
-        initial_count = len(df)
-
         df = df.dropna()
 
         df = df[df["Title"] != "Unknown Product"]
@@ -54,20 +52,22 @@ def transform_data(raw_data):
         if "Timestamp" in df.columns:
             df["Timestamp"] = df["Timestamp"].astype(str)
 
+        df["Title"] = df["Title"].astype("object")
+        df["Size"] = df["Size"].astype("object")
+        df["Gender"] = df["Gender"].astype("object")
+        if "Timestamp" in df.columns:
+            df["Timestamp"] = df["Timestamp"].astype("object")
+
         df = df.dropna()
         df = df.drop_duplicates()
 
         final_count = len(df)
-        print(
-            f"[Transform] Selesai. Data berkurang dari {initial_count} menjadi {final_count} setelah dibersihkan."
-        )
+        print(f"Transform Selesai {final_count}.")
         return df
 
     except KeyError as e:
-        print(f"[Error] Kolom yang diperlukan tidak ditemukan pada data mentah: {e}")
+        print(f"Error: {e}")
         return pd.DataFrame()
     except Exception as e:
-        print(
-            f"[Error] Terjadi kegagalan yang tidak terduga saat transformasi data: {e}"
-        )
+        print(f"Error: {e}")
         return pd.DataFrame()
